@@ -42,7 +42,6 @@ class HSV : public Color {
     HSV(double h, double s, double v) : hue(h), saturation(s), value(v) {}
 };
 
-// Глобальные переменные для виджетов
 GtkWidget *rgb_red_scale, *rgb_green_scale, *rgb_blue_scale;
 GtkWidget *cmyk_cyan_scale, *cmyk_magenta_scale, *cmyk_yellow_scale, *cmyk_black_scale;
 GtkWidget *hsv_hue_scale, *hsv_saturation_scale, *hsv_value_scale;
@@ -52,10 +51,8 @@ GtkWidget *hsv_hue_entry, *hsv_saturation_entry, *hsv_value_entry;
 GtkWidget *color_preview;
 GtkWidget *color_picker_button;
 
-// Флаги для предотвращения рекурсивных обновлений
 bool updating = false;
 
-// Функции преобразования между цветовыми моделями
 RGB CMYKtoRGB(const CMYK& cmyk) {
     double r = (1 - cmyk.cyan) * (1 - cmyk.black);
     double g = (1 - cmyk.magenta) * (1 - cmyk.black);
@@ -130,7 +127,6 @@ RGB HSVtoRGB(const HSV& hsv) {
     }
 }
 
-// Функции обновления интерфейса
 void update_color_preview(const RGB& rgb) {
     GdkRGBA color;
     color.red = rgb.red;
@@ -233,7 +229,6 @@ void update_all_from_rgb(const RGB& rgb) {
     update_color_preview(rgb);
 }
 
-// Обработчики сигналов
 void on_rgb_scale_changed(GtkRange* range, gpointer user_data) {
     if (updating) return;
 
@@ -278,7 +273,6 @@ void on_rgb_entry_activated(GtkEntry* entry, gpointer user_data) {
     rgb.green = std::stod(gtk_entry_get_text(GTK_ENTRY(rgb_green_entry))) / 255.0;
     rgb.blue = std::stod(gtk_entry_get_text(GTK_ENTRY(rgb_blue_entry))) / 255.0;
 
-    // Ограничение значений
     rgb.red = std::clamp(rgb.red, 0.0, 1.0);
     rgb.green = std::clamp(rgb.green, 0.0, 1.0);
     rgb.blue = std::clamp(rgb.blue, 0.0, 1.0);
@@ -295,7 +289,6 @@ void on_cmyk_entry_activated(GtkEntry* entry, gpointer user_data) {
     cmyk.yellow = std::stod(gtk_entry_get_text(GTK_ENTRY(cmyk_yellow_entry))) / 100.0;
     cmyk.black = std::stod(gtk_entry_get_text(GTK_ENTRY(cmyk_black_entry))) / 100.0;
 
-    // Ограничение значений
     cmyk.cyan = std::clamp(cmyk.cyan, 0.0, 1.0);
     cmyk.magenta = std::clamp(cmyk.magenta, 0.0, 1.0);
     cmyk.yellow = std::clamp(cmyk.yellow, 0.0, 1.0);
@@ -313,7 +306,6 @@ void on_hsv_entry_activated(GtkEntry* entry, gpointer user_data) {
     hsv.saturation = std::stod(gtk_entry_get_text(GTK_ENTRY(hsv_saturation_entry))) / 100.0;
     hsv.value = std::stod(gtk_entry_get_text(GTK_ENTRY(hsv_value_entry))) / 100.0;
 
-    // Ограничение значений
     hsv.hue = std::clamp(hsv.hue, 0.0, 360.0);
     hsv.saturation = std::clamp(hsv.saturation, 0.0, 1.0);
     hsv.value = std::clamp(hsv.value, 0.0, 1.0);
@@ -336,7 +328,6 @@ void on_color_picker_changed(GtkColorButton* button, gpointer user_data) {
     update_all_from_rgb(rgb);
 }
 
-// Создание виджетов
 GtkWidget* create_scale_with_entry(const char* label, double min, double max, double step,
                                    GtkWidget** scale, GtkWidget** entry,
                                    GCallback scale_handler, GCallback entry_handler) {
@@ -457,7 +448,6 @@ int main(int argc, char *argv[]) {
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    // Установка начального цвета (красный)
     RGB initial_color(1.0, 0.0, 0.0);
     update_all_from_rgb(initial_color);
 
