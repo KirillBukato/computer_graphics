@@ -1,0 +1,1 @@
+CMakeLists.txt not found in /home/kirill/CLionProjects/computer_graphics Select CMakeLists.txt
